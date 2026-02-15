@@ -15,27 +15,27 @@ import (
 
 // GORM Models
 type Repo struct {
-	ID        uint      `gorm:"primaryKey"`
-	FullName  string    `gorm:"uniqueIndex;not null"`
+	ID        uint   `gorm:"primaryKey"`
+	FullName  string `gorm:"uniqueIndex;not null"`
 	URL       string
 	CreatedAt time.Time `gorm:"autoCreateTime"`
 }
 
 type Build struct {
-	ID          uint      `gorm:"primaryKey"`
-	RepoID      uint      `gorm:"not null;index:idx_builds_repo_ts,priority:1;index:idx_builds_repo_status_ts,priority:1"`
-	BuildID     string    `gorm:"not null;index:idx_builds_build_id"`
-	Provider    string    `gorm:"not null"`
-	CommitSHA   string    `gorm:"column:commit_sha;not null"`
+	ID          uint   `gorm:"primaryKey"`
+	RepoID      uint   `gorm:"not null;index:idx_builds_repo_ts,priority:1;index:idx_builds_repo_status_ts,priority:1"`
+	BuildID     string `gorm:"not null;index:idx_builds_build_id"`
+	Provider    string `gorm:"not null"`
+	CommitSHA   string `gorm:"column:commit_sha;not null"`
 	Branch      string
-	RunURL      string    `gorm:"column:run_url"`
+	RunURL      string `gorm:"column:run_url"`
 	Workflow    string
 	Status      string    `gorm:"not null;index:idx_builds_repo_status_ts,priority:2"`
 	Ts          time.Time `gorm:"not null;index:idx_builds_repo_ts,priority:2,sort:desc;index:idx_builds_repo_status_ts,priority:3,sort:desc"`
 	PayloadHash string    `gorm:"not null"`
 	CreatedAt   time.Time `gorm:"autoCreateTime"`
 	UpdatedAt   time.Time `gorm:"autoUpdateTime"`
-	
+
 	Repo        Repo         `gorm:"foreignKey:RepoID"`
 	BuildImages []BuildImage `gorm:"foreignKey:BuildID"`
 }
@@ -49,16 +49,16 @@ type Image struct {
 	Digest    string    `gorm:"uniqueIndex;not null"`
 	Name      string    `gorm:"not null"`
 	CreatedAt time.Time `gorm:"autoCreateTime"`
-	
+
 	BuildImages []BuildImage `gorm:"foreignKey:ImageID"`
 }
 
 type BuildImage struct {
-	BuildID   uint     `gorm:"primaryKey;not null"`
-	ImageID   uint     `gorm:"primaryKey;not null;index:idx_build_images_image"`
+	BuildID   uint `gorm:"primaryKey;not null"`
+	ImageID   uint `gorm:"primaryKey;not null;index:idx_build_images_image"`
 	Component string
-	Tags      string   `gorm:"type:text"` // Stored as comma-separated
-	
+	Tags      string `gorm:"type:text"` // Stored as comma-separated
+
 	Build Build `gorm:"foreignKey:BuildID"`
 	Image Image `gorm:"foreignKey:ImageID"`
 }
@@ -147,16 +147,16 @@ func (s *GormStore) UpsertRepo(ctx context.Context, fullName, url string) (uint,
 		FullName: fullName,
 		URL:      url,
 	}).Error
-	
+
 	if err != nil {
 		return 0, err
 	}
-	
+
 	// Update URL if changed
 	if repo.URL != url {
 		s.db.WithContext(ctx).Model(&repo).Update("url", url)
 	}
-	
+
 	return repo.ID, nil
 }
 
@@ -164,7 +164,7 @@ func (s *GormStore) UpsertRepo(ctx context.Context, fullName, url string) (uint,
 func (s *GormStore) UpsertBuild(ctx context.Context, req *UpsertBuildRequest) (*UpsertBuildResult, error) {
 	var existing Build
 	err := s.db.WithContext(ctx).Where("repo_id = ? AND build_id = ?", req.RepoID, req.BuildID).First(&existing).Error
-	
+
 	if err == gorm.ErrRecordNotFound {
 		// Insert new build
 		newBuild := Build{
@@ -179,11 +179,11 @@ func (s *GormStore) UpsertBuild(ctx context.Context, req *UpsertBuildRequest) (*
 			Ts:          req.Timestamp,
 			PayloadHash: req.PayloadHash,
 		}
-		
+
 		if err := s.db.WithContext(ctx).Create(&newBuild).Error; err != nil {
 			return nil, fmt.Errorf("insert build: %w", err)
 		}
-		
+
 		return &UpsertBuildResult{
 			ID:         newBuild.ID,
 			Idempotent: false,
@@ -191,7 +191,7 @@ func (s *GormStore) UpsertBuild(ctx context.Context, req *UpsertBuildRequest) (*
 	} else if err != nil {
 		return nil, fmt.Errorf("check existing build: %w", err)
 	}
-	
+
 	// Build exists - check if idempotent
 	if existing.PayloadHash == req.PayloadHash {
 		return &UpsertBuildResult{
@@ -199,7 +199,7 @@ func (s *GormStore) UpsertBuild(ctx context.Context, req *UpsertBuildRequest) (*
 			Idempotent: true,
 		}, nil
 	}
-	
+
 	// Conflict - different payload
 	return &UpsertBuildResult{
 		ID:           existing.ID,
@@ -215,34 +215,34 @@ func (s *GormStore) UpsertImage(ctx context.Context, digest, name string) (uint,
 		Digest: digest,
 		Name:   name,
 	}).Error
-	
+
 	if err != nil {
 		return 0, err
 	}
-	
+
 	// Update name if changed
 	if image.Name != name {
 		s.db.WithContext(ctx).Model(&image).Update("name", name)
 	}
-	
+
 	return image.ID, nil
 }
 
 // UpsertBuildImage inserts or updates the build-image relationship
 func (s *GormStore) UpsertBuildImage(ctx context.Context, buildID, imageID uint, component string, tags []string) error {
 	tagsStr := strings.Join(tags, ",")
-	
+
 	buildImage := BuildImage{
 		BuildID:   buildID,
 		ImageID:   imageID,
 		Component: component,
 		Tags:      tagsStr,
 	}
-	
+
 	err := s.db.WithContext(ctx).Where("build_id = ? AND image_id = ?", buildID, imageID).
 		Assign(BuildImage{Component: component, Tags: tagsStr}).
 		FirstOrCreate(&buildImage).Error
-	
+
 	return err
 }
 

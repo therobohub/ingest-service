@@ -12,16 +12,16 @@ import (
 
 // CanonicalPayload represents the material fields for idempotency checking
 type CanonicalPayload struct {
-	Repo      string          `json:"repo"`
-	BuildID   string          `json:"build_id"`
-	Provider  string          `json:"provider"`
-	CommitSHA string          `json:"commit_sha"`
-	Branch    string          `json:"branch"`
-	RunURL    string          `json:"run_url"`
-	Workflow  string          `json:"workflow"`
-	Status    string          `json:"status"`
-	Timestamp time.Time       `json:"timestamp"`
-	Image     CanonicalImage  `json:"image"`
+	Repo      string         `json:"repo"`
+	BuildID   string         `json:"build_id"`
+	Provider  string         `json:"provider"`
+	CommitSHA string         `json:"commit_sha"`
+	Branch    string         `json:"branch"`
+	RunURL    string         `json:"run_url"`
+	Workflow  string         `json:"workflow"`
+	Status    string         `json:"status"`
+	Timestamp time.Time      `json:"timestamp"`
+	Image     CanonicalImage `json:"image"`
 }
 
 // CanonicalImage represents the image with sorted tags

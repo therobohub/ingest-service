@@ -10,13 +10,13 @@ import (
 )
 
 var (
-	ErrMissingToken      = errors.New("missing authorization token")
-	ErrInvalidToken      = errors.New("invalid token")
-	ErrInvalidSignature  = errors.New("invalid token signature")
-	ErrInvalidIssuer     = errors.New("invalid token issuer")
-	ErrInvalidAudience   = errors.New("invalid token audience")
-	ErrTokenExpired      = errors.New("token expired")
-	ErrMissingRepoClaim  = errors.New("missing repo claim in token")
+	ErrMissingToken     = errors.New("missing authorization token")
+	ErrInvalidToken     = errors.New("invalid token")
+	ErrInvalidSignature = errors.New("invalid token signature")
+	ErrInvalidIssuer    = errors.New("invalid token issuer")
+	ErrInvalidAudience  = errors.New("invalid token audience")
+	ErrTokenExpired     = errors.New("token expired")
+	ErrMissingRepoClaim = errors.New("missing repo claim in token")
 )
 
 // Claims represents the JWT claims we expect

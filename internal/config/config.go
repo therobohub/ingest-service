@@ -15,7 +15,7 @@ type Config struct {
 	DatabaseURL string
 
 	// JWT Authentication
-	JWTSecret       string
+	JWTSecret        string
 	ClockSkewSeconds int
 
 	// Rate Limiting

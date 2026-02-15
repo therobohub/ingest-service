@@ -67,12 +67,12 @@ type BuildDetailResponse struct {
 
 // ImageDetailResponse for GET /images/{digest}
 type ImageDetailResponse struct {
-	Digest       string              `json:"digest"`
-	Name         string              `json:"name"`
-	Components   []string            `json:"components"`
-	Tags         []string            `json:"tags"`
-	Repos        []string            `json:"repos"`
-	RecentBuilds []ImageRecentBuild  `json:"recent_builds"`
+	Digest       string             `json:"digest"`
+	Name         string             `json:"name"`
+	Components   []string           `json:"components"`
+	Tags         []string           `json:"tags"`
+	Repos        []string           `json:"repos"`
+	RecentBuilds []ImageRecentBuild `json:"recent_builds"`
 }
 
 // ImageRecentBuild represents a build that references an image

@@ -10,11 +10,11 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	"gorm.io/gorm"
 	"github.com/robohub/ingest-service/internal/auth"
 	"github.com/robohub/ingest-service/internal/config"
 	"github.com/robohub/ingest-service/internal/db"
 	"github.com/robohub/ingest-service/internal/types"
+	"gorm.io/gorm"
 )
 
 const testSecret = "test-secret-key"

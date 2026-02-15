@@ -32,7 +32,7 @@ func main() {
 
 	// Connect to database with GORM
 	ctx := context.Background()
-	
+
 	gormDB, err := connectDatabase(cfg.DatabaseURL)
 	if err != nil {
 		slog.Error("failed to connect to database", "error", err)

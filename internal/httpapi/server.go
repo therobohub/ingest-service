@@ -13,13 +13,13 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	"gorm.io/gorm"
 	"github.com/robohub/ingest-service/internal/auth"
 	"github.com/robohub/ingest-service/internal/config"
 	"github.com/robohub/ingest-service/internal/db"
 	"github.com/robohub/ingest-service/internal/hash"
 	"github.com/robohub/ingest-service/internal/ratelimit"
 	"github.com/robohub/ingest-service/internal/types"
+	"gorm.io/gorm"
 )
 
 var digestRegex = regexp.MustCompile(`^sha256:[a-f0-9]{64}$`)
