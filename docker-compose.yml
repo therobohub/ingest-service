@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: robohub_ingest
+      POSTGRES_USER: robohub
+      POSTGRES_PASSWORD: robohub
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U robohub"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  ingest-service:
+    build: .
+    ports:
+      - "8081:8081"
+    environment:
+      PORT: "8081"
+      DATABASE_URL: "postgres://robohub:robohub@postgres:5432/robohub_ingest?sslmode=disable"
+      ROBOHUB_JWT_SECRET: "dev-secret-change-in-production"
+      ROBOHUB_CLOCK_SKEW_SECONDS: "60"
+      ROBOHUB_RATE_LIMIT_RPS: "10"
+      ROBOHUB_RATE_LIMIT_BURST: "20"
+      ROBOHUB_MAX_BODY_BYTES: "262144"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

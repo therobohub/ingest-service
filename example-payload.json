@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0",
+  "provider": "github_actions",
+  "repo": "example/robot-perception",
+  "repo_url": "https://github.com/example/robot-perception",
+  "commit_sha": "abc123def456789012345678901234567890abcd",
+  "branch": "main",
+  "build_id": "gha-run-123456-1",
+  "run_url": "https://github.com/example/robot-perception/actions/runs/123456",
+  "workflow": "RoboHub CI (Build, Push, Publish Metadata)",
+  "status": "success",
+  "timestamp": "2024-01-15T10:30:00Z",
+  "image": {
+    "component": "perception",
+    "name": "ghcr.io/example/robot-perception",
+    "digest": "sha256:1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+    "tags": ["sha-abc123", "main", "latest"]
+  }
+}
