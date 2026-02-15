@@ -249,7 +249,9 @@ func (s *Server) handleListBuilds(w http.ResponseWriter, r *http.Request) {
 	limitStr := r.URL.Query().Get("limit")
 	limit := 50
 	if limitStr != "" {
-		fmt.Sscanf(limitStr, "%d", &limit)
+		if _, err := fmt.Sscanf(limitStr, "%d", &limit); err != nil {
+			limit = 50 // Reset to default on parse error
+		}
 	}
 	if limit <= 0 || limit > 100 {
 		limit = 50
@@ -396,7 +398,9 @@ func (s *Server) handleGetImage(w http.ResponseWriter, r *http.Request) {
 // handleHealthz handles GET /healthz
 func (s *Server) handleHealthz(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("ok"))
+	if _, err := w.Write([]byte("ok")); err != nil {
+		slog.Error("failed to write healthz response", "error", err)
+	}
 }
 
 // handleReadyz handles GET /readyz
@@ -407,12 +411,16 @@ func (s *Server) handleReadyz(w http.ResponseWriter, r *http.Request) {
 	if err := s.store.Ping(ctx); err != nil {
 		slog.Error("readiness check failed", "error", err)
 		w.WriteHeader(http.StatusServiceUnavailable)
-		w.Write([]byte("database unavailable"))
+		if _, err := w.Write([]byte("database unavailable")); err != nil {
+			slog.Error("failed to write readyz error response", "error", err)
+		}
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("ok"))
+	if _, err := w.Write([]byte("ok")); err != nil {
+		slog.Error("failed to write readyz response", "error", err)
+	}
 }
 
 // validateIngestRequest validates the ingest request
